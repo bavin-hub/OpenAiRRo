@@ -1,6 +1,6 @@
-# OpenAiRRo (open source)
+# OpenAiRRo - Entity
 
-**OpenAiRRo** is an **open-source**, minimal desktop web browser built with **Electron**, **React (Vite)**, and a separate **Flask** backend. The shell provides familiar browser chrome (tabs, navigation, omnibox, side panels) and renders pages inside an Electron [`<webview>`](https://www.electronjs.org/docs/latest/api/webview-tag) guest surface.
+**OpenAiRRo** is an **open-source**, minimal desktop web browser built with **Electron**, **React (Vite)**, and a separate **Flask** backend. The shell provides familiar browser chrome (tabs, navigation, omnibox, side panels) and renders pages inside an Electron `[<webview>](https://www.electronjs.org/docs/latest/api/webview-tag)` guest surface.
 
 The project is a **starting point**: the UI covers everyday browsing basics, while the Python API ships with dummy search, streaming AI, and user/auth endpoints you can replace with real providers, databases, and models. **Developers are free to change the backend** (swap Flask for another framework, add persistence, wire cloud services) without being locked into this template’s placeholder logic.
 
@@ -8,21 +8,37 @@ The project is a **starting point**: the UI covers everyday browsing basics, whi
 
 > **If you clone this repo:** the desktop client is wired to a **hosted API** at **[https://airro.online](https://airro.online)** — that domain points to an **AWS server** where Flask is deployed. Search, AI chat, and login in a **built/packaged** app call that host, not your machine. To use **your own** backend, change the API URL (see [Configure the API domain](#configure-the-api-domain-required-for-new-developers) below).
 
+## Screenshots
+
+**Home** — omnibox search and **Entity** landing page (Flask-backed search):
+
+![OpenAiRRo home screen](img1.png)
+
+**Search results** — in-app results from the API (`GET /search`):
+
+![OpenAiRRo search results](img2.png)
+
+**AI assistant** — per-tab chat with streaming replies (`POST /ai/chat`):
+
+![OpenAiRRo search and AI panel](img3.png)
+
 ---
 
 ## What you get
 
-| Layer | Stack | Role |
-|-------|--------|------|
-| **Client** | Electron + React | Tabs, toolbar, omnibox, `<webview>` browsing, left/right panels, local profile/history/bookmarks |
-| **API** | Flask (`backend/`) | Search results, streaming AI chat, user signup/login, chat metadata (stubs today) |
+
+| Layer      | Stack              | Role                                                                                             |
+| ---------- | ------------------ | ------------------------------------------------------------------------------------------------ |
+| **Client** | Electron + React   | Tabs, toolbar, omnibox, `<webview>` browsing, left/right panels, local profile/history/bookmarks |
+| **API**    | Flask (`backend/`) | Search results, streaming AI chat, user signup/login, chat metadata (stubs today)                |
+
 
 ```mermaid
 flowchart TB
   subgraph Desktop["User machine (Linux / Windows / macOS)"]
     E[Electron main process]
     UI[React shell in dist/]
-    WV["&lt;webview&gt; guest pages"]
+    WV["<webview> guest pages"]
     E --> UI
     UI --> WV
     WV --> Sites[Websites users browse]
@@ -35,6 +51,8 @@ flowchart TB
   end
   UI -->|HTTP / HTTPS| F
 ```
+
+
 
 ---
 
@@ -69,14 +87,16 @@ flowchart TB
 
 The Flask app in `backend/main_server.py` is **stateless** for search and AI: the client sends full context each request; nothing is stored server-side for those routes until you add a database.
 
-| Endpoint | Method | Purpose |
-|----------|--------|---------|
-| `/` | GET | Health hint / API overview |
-| `/search` | GET | JSON `{ query, results }` for omnibox search UI |
-| `/ai/chat` | POST | JSON `{ "messages": [...] }` → streaming **plain text** (dummy stream today) |
-| `/user/singup` | POST | Signup stub (OTP placeholder) |
-| `/user/login` | POST | Login stub (JWT + user + chat list placeholders) |
-| `/user/get_full_chat` | POST | Fetch dummy conversation by `chat_id` |
+
+| Endpoint              | Method | Purpose                                                                      |
+| --------------------- | ------ | ---------------------------------------------------------------------------- |
+| `/`                   | GET    | Health hint / API overview                                                   |
+| `/search`             | GET    | JSON `{ query, results }` for omnibox search UI                              |
+| `/ai/chat`            | POST   | JSON `{ "messages": [...] }` → streaming **plain text** (dummy stream today) |
+| `/user/singup`        | POST   | Signup stub (OTP placeholder)                                                |
+| `/user/login`         | POST   | Login stub (JWT + user + chat list placeholders)                             |
+| `/user/get_full_chat` | POST   | Fetch dummy conversation by `chat_id`                                        |
+
 
 CORS is enabled for local dev. **Replace** dummy pages, streams, and auth with your own search engine, LLM, and user store when you customize the backend.
 
@@ -86,23 +106,27 @@ CORS is enabled for local dev. **Replace** dummy pages, streams, and auth with y
 
 This project ships with a **default production API base URL**:
 
-| Setting | Current value |
-|---------|----------------|
-| Domain | **`https://airro.online`** |
+
+| Setting | Current value                                                      |
+| ------- | ------------------------------------------------------------------ |
+| Domain  | `**https://airro.online`**                                         |
 | Backend | Flask on an **AWS** instance (DNS for `airro.online` points there) |
 
-The Electron app uses that URL for **`GET /search`**, **`POST /ai/chat`**, and **`/user/*`** when you run a **production build** (`npm run build` + `npm start` or packaged installers). It is **not** your local `backend/` folder unless you change the client to point at localhost.
+
+The Electron app uses that URL for `**GET /search`**, `**POST /ai/chat**`, and `**/user/***` when you run a **production build** (`npm run build` + `npm start` or packaged installers). It is **not** your local `backend/` folder unless you change the client to point at localhost.
 
 **If you download or fork the repo**, you will usually want to:
 
 1. **Deploy your own Flask API** (see `backend_deployment.md`) on AWS, another cloud, or your laptop.
 2. **Point the browser at your API** instead of `airro.online` by updating these files:
 
-| File | What to change |
-|------|----------------|
-| `src/searchNavigation.js` | `SEARCH_API_ORIGIN` — set to your API origin, e.g. `https://api.yourdomain.com` (no trailing slash) |
-| `index.html` | Content-Security-Policy `connect-src` — add your HTTPS (and dev `http://127.0.0.1:5000` if you still use local Flask) |
-| `vite.config.js` | Dev proxy `target` for `/user` — defaults to `http://127.0.0.1:5000` when you run `npm run backend` locally |
+
+| File                      | What to change                                                                                                        |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `src/searchNavigation.js` | `SEARCH_API_ORIGIN` — set to your API origin, e.g. `https://api.yourdomain.com` (no trailing slash)                   |
+| `index.html`              | Content-Security-Policy `connect-src` — add your HTTPS (and dev `http://127.0.0.1:5000` if you still use local Flask) |
+| `vite.config.js`          | Dev proxy `target` for `/user` — defaults to `http://127.0.0.1:5000` when you run `npm run backend` locally           |
+
 
 Auth and AI panels use `SEARCH_API_ORIGIN` in production (`src/pages/RightNavBar.jsx`, `src/pages/EnterUser.jsx`). In **dev** (`npm run dev`), `/user` requests go through the Vite proxy to localhost; search/AI still use `SEARCH_API_ORIGIN` unless you change that constant to `http://127.0.0.1:5000` while developing against local Flask only.
 
@@ -114,12 +138,14 @@ You can also run **only** the local stack: set `SEARCH_API_ORIGIN` to `http://12
 
 ## Prerequisites
 
-| Requirement | Notes |
-|-------------|--------|
-| **Node.js** 18+ (20+ recommended) | Includes **npm** |
-| **Python 3** + **pip** | Optional for local Flask; packaged app can use cloud API only |
-| **Git** | To clone the repo |
-| **Linux only** | GTK/NSS and related libs for Electron — see [Electron Linux docs](https://www.electronjs.org/docs/latest/development/build-instructions-linux) |
+
+| Requirement                       | Notes                                                                                                                                          |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Node.js** 18+ (20+ recommended) | Includes **npm**                                                                                                                               |
+| **Python 3** + **pip**            | Optional for local Flask; packaged app can use cloud API only                                                                                  |
+| **Git**                           | To clone the repo                                                                                                                              |
+| **Linux only**                    | GTK/NSS and related libs for Electron — see [Electron Linux docs](https://www.electronjs.org/docs/latest/development/build-instructions-linux) |
+
 
 **Do not commit** `node_modules/`, `dist/`, or `release/` — they are generated locally (see `.gitignore`).
 
@@ -156,7 +182,7 @@ Skip this if you only use the hosted API at `https://airro.online`.
 
 ### 4. Configure the API URL (forks / your own server)
 
-Out of the box, production builds call **`https://airro.online`**. To use localhost or your domain, edit `SEARCH_API_ORIGIN` in `src/searchNavigation.js` and update `connect-src` in `index.html` — see [Configure the API domain](#configure-the-api-domain-required-for-new-developers).
+Out of the box, production builds call `**https://airro.online**`. To use localhost or your domain, edit `SEARCH_API_ORIGIN` in `src/searchNavigation.js` and update `connect-src` in `index.html` — see [Configure the API domain](#configure-the-api-domain-required-for-new-developers).
 
 ### 5. Run in development (recommended first run)
 
@@ -193,13 +219,15 @@ npm start
 
 ## Development (quick reference)
 
-| Goal | Command |
-|------|---------|
-| Dev UI + hot reload | `npm run dev` |
-| Local Flask API | `npm run backend` |
-| Production UI bundle | `npm run build` |
-| Electron + built UI | `npm start` |
+
+| Goal                                  | Command           |
+| ------------------------------------- | ----------------- |
+| Dev UI + hot reload                   | `npm run dev`     |
+| Local Flask API                       | `npm run backend` |
+| Production UI bundle                  | `npm run build`   |
+| Electron + built UI                   | `npm start`       |
 | UI only in a browser (no `<webview>`) | `npm run preview` |
+
 
 ---
 
@@ -218,13 +246,13 @@ npm run backend
 The `backend/` folder is intentionally small and readable:
 
 - Swap **dummy search** (`DUMMY_PAGES`) for a real API (Google Programmable Search, Bing, self-hosted index, etc.).
-- Replace **`_stream_dummy_text`** in `/ai/chat` with calls to OpenAI, Anthropic, or your own model — keep the same contract (POST JSON messages, stream UTF-8 plain text) or change the client in `src/searchNavigation.js` to match.
+- Replace `**_stream_dummy_text`** in `/ai/chat` with calls to OpenAI, Anthropic, or your own model — keep the same contract (POST JSON messages, stream UTF-8 plain text) or change the client in `src/searchNavigation.js` to match.
 - Implement **real auth**: hash passwords, persist users in PostgreSQL/MySQL, issue JWTs, and remove dummy OTP/tokens in `/user/*`.
 - Run behind **Gunicorn** + HTTPS in production; use env vars for secrets (see `backend_deployment.md`).
 
 You may keep Flask or **rewrite the API** in FastAPI, Node, Go, etc. — then set `SEARCH_API_ORIGIN` (or a future `VITE_API_ORIGIN`) to your HTTPS origin as described in `frontend_deployment.md`.
 
-The reference deployment uses **`airro.online` → AWS + Flask**; your fork should use **your** domain after you deploy.
+The reference deployment uses `**airro.online` → AWS + Flask**; your fork should use **your** domain after you deploy.
 
 ### What the packager does *not* include
 
@@ -240,22 +268,24 @@ OpenAiRRo uses **electron-builder** (already in `package.json`). Packing **does 
 
 1. Complete [Setup procedure](#setup-procedure) (`npm install` at minimum).
 2. Set `SEARCH_API_ORIGIN` and CSP if you are not using `https://airro.online`.
-3. For **`.deb`** builds, set `author`, `homepage`, and `build.linux.maintainer` in `package.json`.
+3. For `**.deb`** builds, set `author`, `homepage`, and `build.linux.maintainer` in `package.json`.
 
 ### Packing commands
 
 Run from the project root. Each command runs `vite build` first, then electron-builder.
 
-| Command | What it produces |
-|---------|------------------|
-| `npm run pack` | **Unpacked** app (fast test, no installer) → `release/linux-unpacked/` on Linux |
-| `npm run dist` | Installers for the **current OS** |
-| `npm run dist -- --linux AppImage` | Linux **AppImage** |
-| `npm run dist -- --linux deb` | Linux **.deb** package |
-| `npm run dist -- --win` | Windows **.exe** (run on Windows) |
-| `npm run dist -- --mac` | macOS **.dmg** (run on macOS) |
 
-Output directory: **`release/`** (see `build.directories.output` in `package.json`).
+| Command                            | What it produces                                                                |
+| ---------------------------------- | ------------------------------------------------------------------------------- |
+| `npm run pack`                     | **Unpacked** app (fast test, no installer) → `release/linux-unpacked/` on Linux |
+| `npm run dist`                     | Installers for the **current OS**                                               |
+| `npm run dist -- --linux AppImage` | Linux **AppImage**                                                              |
+| `npm run dist -- --linux deb`      | Linux **.deb** package                                                          |
+| `npm run dist -- --win`            | Windows **.exe** (run on Windows)                                               |
+| `npm run dist -- --mac`            | macOS **.dmg** (run on macOS)                                                   |
+
+
+Output directory: `**release/`** (see `build.directories.output` in `package.json`).
 
 Example layout after a Linux `npm run dist`:
 
@@ -296,26 +326,28 @@ sudo apt-get install -f
 
 Then launch **OpenAiRRo** from the app menu.
 
-**API for packed builds:** search, AI, and login call **`https://airro.online`** by default. For local-only testing, run `npm run backend` and rebuild after setting `SEARCH_API_ORIGIN` to `http://127.0.0.1:5000`.
+**API for packed builds:** search, AI, and login call `**https://airro.online`** by default. For local-only testing, run `npm run backend` and rebuild after setting `SEARCH_API_ORIGIN` to `http://127.0.0.1:5000`.
 
-More detail: **`package-electron.md`**.
+More detail: `**package-electron.md**`.
 
 ---
 
 ## Project structure
 
-| Path | Role |
-|------|------|
-| `electron/main.js` | Main process: `BrowserWindow`, `<webview>` tag, dev URL vs `dist/index.html`, external `window.open` |
-| `electron/preload.cjs` | Preload (`contextBridge`, e.g. `browserMeta`) |
-| `index.html` | Vite entry; CSP for the shell page |
-| `vite.config.js` | Vite; `base: './'` for `file://` in production |
-| `src/App.jsx` | Browser UI: tabs, toolbar, webviews, per-tab AI state |
-| `src/pages/LeftNavBar.jsx` | Profile, history, bookmarks, theme |
-| `src/pages/RightNavBar.jsx` | AI chat panel |
-| `src/searchNavigation.js` | Omnibox, search fetch, AI streaming fetch |
-| `backend/main_server.py` | Flask API (search, AI, user routes) |
-| `backend/requirements.txt` | Python dependencies |
+
+| Path                        | Role                                                                                                 |
+| --------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `electron/main.js`          | Main process: `BrowserWindow`, `<webview>` tag, dev URL vs `dist/index.html`, external `window.open` |
+| `electron/preload.cjs`      | Preload (`contextBridge`, e.g. `browserMeta`)                                                        |
+| `index.html`                | Vite entry; CSP for the shell page                                                                   |
+| `vite.config.js`            | Vite; `base: './'` for `file://` in production                                                       |
+| `src/App.jsx`               | Browser UI: tabs, toolbar, webviews, per-tab AI state                                                |
+| `src/pages/LeftNavBar.jsx`  | Profile, history, bookmarks, theme                                                                   |
+| `src/pages/RightNavBar.jsx` | AI chat panel                                                                                        |
+| `src/searchNavigation.js`   | Omnibox, search fetch, AI streaming fetch                                                            |
+| `backend/main_server.py`    | Flask API (search, AI, user routes)                                                                  |
+| `backend/requirements.txt`  | Python dependencies                                                                                  |
+
 
 ---
 
@@ -330,47 +362,53 @@ More detail: **`package-electron.md`**.
 
 ## Troubleshooting
 
-| Symptom | Things to check |
-|--------|------------------|
-| Blank window in dev | Port `5173` free; Vite “ready” before Electron starts |
-| Blank window after `npm run build && npm start` | `dist/index.html` exists; `base: './'` in `vite.config.js` |
-| Search / AI / login fails | Default API is `https://airro.online` (AWS); or run local Flask and set `SEARCH_API_ORIGIN` to `http://127.0.0.1:5000`; check CSP in `index.html` allows your origin |
-| `<webview>` missing | `webviewTag: true` in `electron/main.js` |
-| Linux Electron won’t start | Install GTK/NSS libs per Electron docs |
-| Packaged app missing modules | Add any file imported from `main.js` to `build.files` in `package.json` |
+
+| Symptom                                         | Things to check                                                                                                                                                      |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Blank window in dev                             | Port `5173` free; Vite “ready” before Electron starts                                                                                                                |
+| Blank window after `npm run build && npm start` | `dist/index.html` exists; `base: './'` in `vite.config.js`                                                                                                           |
+| Search / AI / login fails                       | Default API is `https://airro.online` (AWS); or run local Flask and set `SEARCH_API_ORIGIN` to `http://127.0.0.1:5000`; check CSP in `index.html` allows your origin |
+| `<webview>` missing                             | `webviewTag: true` in `electron/main.js`                                                                                                                             |
+| Linux Electron won’t start                      | Install GTK/NSS libs per Electron docs                                                                                                                               |
+| Packaged app missing modules                    | Add any file imported from `main.js` to `build.files` in `package.json`                                                                                              |
+
 
 ---
 
 ## Scripts reference
 
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Vite + Electron with HMR |
-| `npm run build` | Production React build → `dist/` |
-| `npm start` | Electron only; loads `dist/` |
+
+| Script            | Description                                             |
+| ----------------- | ------------------------------------------------------- |
+| `npm run dev`     | Vite + Electron with HMR                                |
+| `npm run build`   | Production React build → `dist/`                        |
+| `npm start`       | Electron only; loads `dist/`                            |
 | `npm run preview` | Preview Vite build in a normal browser (no `<webview>`) |
-| `npm run backend` | Flask on `127.0.0.1:5000` |
-| `npm run pack` | Build + unpacked electron-builder output |
-| `npm run dist` | Build + OS installers |
+| `npm run backend` | Flask on `127.0.0.1:5000`                               |
+| `npm run pack`    | Build + unpacked electron-builder output                |
+| `npm run dist`    | Build + OS installers                                   |
+
 
 ---
 
 ## Further documentation
 
-| Document | Contents |
-|----------|----------|
-| [`react-electron-setup.md`](react-electron-setup.md) | How React + Vite + Electron are wired (dev vs prod, preload, security baseline) |
-| [`package-electron.md`](package-electron.md) | electron-builder config, Linux/Windows/macOS artifacts, checklist |
-| [`frontend_deployment.md`](frontend_deployment.md) | Ship the desktop client; point builds at staging/production API URLs |
-| [`backend_deployment.md`](backend_deployment.md) | Deploy Flask to cloud (Docker, scaling, HTTPS, observability) |
-| [`features.md`](features.md) | Existing features and planned additions |
+
+| Document                                             | Contents                                                                        |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `[react-electron-setup.md](react-electron-setup.md)` | How React + Vite + Electron are wired (dev vs prod, preload, security baseline) |
+| `[package-electron.md](package-electron.md)`         | electron-builder config, Linux/Windows/macOS artifacts, checklist               |
+| `[frontend_deployment.md](frontend_deployment.md)`   | Ship the desktop client; point builds at staging/production API URLs            |
+| `[backend_deployment.md](backend_deployment.md)`     | Deploy Flask to cloud (Docker, scaling, HTTPS, observability)                   |
+| `[features.md](features.md)`                         | Existing features and planned additions                                         |
+
 
 ---
 
 ## Customization ideas
 
 - Persist sessions via Electron `session` and webview `partition` attributes.
-- Replace `<webview>` with **`BrowserView`** for more main-process control.
+- Replace `<webview>` with `**BrowserView`** for more main-process control.
 - Register custom protocol handlers or a local proxy.
 - Enable auto-update (e.g. electron-updater) after you ship installers.
 
@@ -384,4 +422,4 @@ MIT — see `package.json`.
 
 ## Acknowledgments
 
-Built with [Electron](https://www.electronjs.org/), [React](https://react.dev/), [Vite](https://vitejs.dev/), and [Flask](https://flask.palletsprojects.com/).
+Built with [Electron](https://www.electronjs.org/), [React](https://react.dev/), [Vite](https://vitejs.dev/), and [Flask](https://flask.palletsprojects.com/).Windows
