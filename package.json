@@ -1,0 +1,55 @@
+{
+  "name": "openairro",
+  "version": "1.0.0",
+  "description": "OpenAiRRo — a minimal desktop web browser built with Electron and React",
+  "main": "electron/main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k \"vite\" \"wait-on http://127.0.0.1:5173 && VITE_DEV_SERVER_URL=http://127.0.0.1:5173 electron .\"",
+    "build": "vite build",
+    "start": "electron .",
+    "preview": "vite preview",
+    "backend": "python3 backend/main_server.py",
+    "pack": "npm run build && electron-builder --dir",
+    "dist": "npm run build && electron-builder"
+  },
+  "keywords": [
+    "electron",
+    "react",
+    "browser",
+    "vite"
+  ],
+  "author": "Bavin <bavin@example.com>",
+  "homepage": "https://example.com/basic-web-browser",
+  "license": "MIT",
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.2.2",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.2",
+    "electron": "^34.0.0",
+    "electron-builder": "^26.8.1",
+    "tailwindcss": "^4.2.2",
+    "vite": "^6.0.3",
+    "wait-on": "^8.0.1"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "build": {
+    "appId": "com.basicwebbrowser.app",
+    "productName": "OpenAiRRo",
+    "files": [
+      "electron/**/*",
+      "dist/**/*",
+      "src/featureFlags.js",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "linux": {
+      "maintainer": "Bavin <bavin@example.com>"
+    }
+  }
+}

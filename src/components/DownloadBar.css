@@ -1,0 +1,160 @@
+.download-bar {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  z-index: 180;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.download-bar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(91, 141, 239, 0.45);
+  background: linear-gradient(180deg, #2f3644 0%, #1e222a 100%);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.45);
+  pointer-events: auto;
+  animation: download-bar-in 0.2s ease-out;
+}
+
+@keyframes download-bar-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.download-bar-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.download-bar-filename {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #e8eaed;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.download-bar-status {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: #9aa0a6;
+}
+
+.download-bar-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.download-bar-progress {
+  flex: 1;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.download-bar-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #5b8def;
+  transition: width 0.15s ease;
+}
+
+.download-bar-progress-label {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 600;
+  color: #9aa0a6;
+  min-width: 2.5rem;
+  text-align: right;
+}
+
+.download-bar-actions {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.download-bar-btn {
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #e8eaed;
+  background: rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+}
+
+.download-bar-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.download-bar-btn--primary {
+  border-color: rgba(91, 141, 239, 0.55);
+  color: #aecbfa;
+}
+
+.download-bar-btn--danger {
+  border-color: rgba(242, 139, 130, 0.45);
+  color: #f28b82;
+}
+
+html[data-shell-color-mode='light'] .download-bar-item {
+  border-color: rgba(26, 115, 232, 0.35);
+  background: linear-gradient(180deg, #ffffff 0%, #f1f3f4 100%);
+  box-shadow: 0 8px 24px rgba(60, 64, 67, 0.18);
+}
+
+html[data-shell-color-mode='light'] .download-bar-filename {
+  color: #202124;
+}
+
+html[data-shell-color-mode='light'] .download-bar-status,
+html[data-shell-color-mode='light'] .download-bar-progress-label {
+  color: #5f6368;
+}
+
+html[data-shell-color-mode='light'] .download-bar-progress {
+  background: rgba(60, 64, 67, 0.12);
+}
+
+html[data-shell-color-mode='light'] .download-bar-btn {
+  border-color: rgba(60, 64, 67, 0.18);
+  color: #202124;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+html[data-shell-color-mode='light'] .download-bar-btn:hover {
+  background: #e8eaed;
+}
+
+html[data-shell-color-mode='light'] .download-bar-btn--primary {
+  border-color: rgba(26, 115, 232, 0.45);
+  color: #1a73e8;
+}
+
+html[data-shell-color-mode='light'] .download-bar-btn--danger {
+  border-color: rgba(217, 48, 37, 0.35);
+  color: #c5221f;
+}

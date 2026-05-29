@@ -1,0 +1,62 @@
+@import 'tailwindcss';
+
+:root {
+  --chrome-gradient-top: #1a1d24;
+  --chrome-gradient-bottom: #14161c;
+  --shell-accent: #3d6ab8;
+  /* Main shell: lighter at center, darker toward edges (overridden by theme slider) */
+  --shell-radial-center: hsl(215, 24%, 25%);
+  --shell-radial-mid: hsl(218, 20%, 16%);
+  --shell-radial-edge: hsl(222, 16%, 6%);
+  /* Shared UI rhythm */
+  --ui-radius-sm: 6px;
+  --ui-radius-md: 10px;
+  --ui-radius-lg: 14px;
+  --ui-transition: 0.15s ease;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    Ubuntu,
+    Cantarell,
+    'Noto Sans',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  background: radial-gradient(
+    ellipse 130% 120% at 50% 40%,
+    var(--shell-radial-center, #1e2430) 0%,
+    var(--shell-radial-mid, #141821) 42%,
+    var(--shell-radial-edge, #0a0c10) 72%,
+    #040508 100%
+  );
+  color: var(--shell-foreground, #e8eaed);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}

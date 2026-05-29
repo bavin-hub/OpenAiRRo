@@ -1,0 +1,330 @@
+.page-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.page-tools-btn {
+  height: 34px;
+  padding: 0 12px;
+  border-radius: var(--ui-radius-md);
+  border: 1px solid #3d4454;
+  background: #252a35;
+  color: #e8eaed;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background var(--ui-transition), border-color var(--ui-transition), opacity var(--ui-transition);
+}
+
+.page-tools-btn:hover:not(:disabled) {
+  background: #323845;
+  border-color: #4a5266;
+}
+
+.page-tools-btn:disabled {
+  cursor: not-allowed;
+}
+
+.page-tools-btn--zoom {
+  min-width: 58px;
+  font-variant-numeric: tabular-nums;
+}
+
+.page-tools-zoom {
+  position: relative;
+}
+
+.page-tools-zoom-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 40;
+  min-width: 220px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #3d4454;
+  background: linear-gradient(180deg, #2f3644 0%, #1e222a 100%);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+.page-tools-zoom-mode {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.page-tools-mode-btn {
+  flex: 1;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid #3d4454;
+  background: #252a35;
+  color: #bdc1c6;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.page-tools-mode-btn--active {
+  border-color: rgba(91, 141, 239, 0.65);
+  background: rgba(91, 141, 239, 0.16);
+  color: #e8eaed;
+}
+
+.page-tools-zoom-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.page-tools-icon-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid #3d4454;
+  background: #252a35;
+  color: #e8eaed;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.page-tools-icon-btn:hover:not(:disabled) {
+  background: #323845;
+  border-color: #4a5266;
+}
+
+.page-tools-icon-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.page-tools-zoom-label {
+  flex: 1;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #e8eaed;
+  font-variant-numeric: tabular-nums;
+}
+
+.page-tools-reset-btn {
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid #4a5266;
+  background: transparent;
+  color: #bdc1c6;
+  font-size: 12px;
+}
+
+.page-tools-reset-btn:hover {
+  color: #e8eaed;
+  border-color: #5b8def;
+}
+
+.page-tools-btn--hidden {
+  display: none !important;
+}
+
+.page-tools-error {
+  max-width: 180px;
+  font-size: 11px;
+  line-height: 1.3;
+  color: #f28b82;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.find-bar {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  bottom: auto;
+  z-index: 1;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: min(560px, calc(100% - 24px));
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(91, 141, 239, 0.45);
+  background: linear-gradient(180deg, #2f3644 0%, #1e222a 100%);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+}
+
+.find-bar-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #bdc1c6;
+}
+
+.find-bar-input {
+  flex: 1;
+  min-width: 0;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid #3d4454;
+  background: rgba(12, 14, 18, 0.92);
+  color: #e8eaed;
+  outline: none;
+}
+
+.find-bar-input:focus {
+  border-color: #5b8def;
+  box-shadow: 0 0 0 3px rgba(91, 141, 239, 0.18);
+}
+
+.find-bar-status {
+  min-width: 72px;
+  font-size: 12px;
+  color: #9aa0a6;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.find-bar-close {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #bdc1c6;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.find-bar-close:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e8eaed;
+}
+
+.print-preview-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(4, 6, 10, 0.72);
+}
+
+.print-preview-dialog {
+  display: flex;
+  flex-direction: column;
+  width: min(920px, 100%);
+  height: min(82vh, 900px);
+  border-radius: 14px;
+  border: 1px solid #3d4454;
+  background: #14161c;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+.print-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #2a2f3a;
+}
+
+.print-preview-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #e8eaed;
+}
+
+.print-preview-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.print-preview-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0c10;
+}
+
+.print-preview-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #fff;
+}
+
+.print-preview-shell {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.print-preview-message {
+  margin: 0;
+  font-size: 14px;
+  color: #bdc1c6;
+}
+
+.print-preview-message--error {
+  color: #f28b82;
+}
+
+html[data-shell-color-mode='light'] .page-tools-btn,
+html[data-shell-color-mode='light'] .page-tools-icon-btn,
+html[data-shell-color-mode='light'] .page-tools-mode-btn {
+  border-color: #b0b8c8;
+  background: #e8ecf3;
+  color: #1e293b;
+}
+
+html[data-shell-color-mode='light'] .page-tools-btn:hover:not(:disabled),
+html[data-shell-color-mode='light'] .page-tools-icon-btn:hover:not(:disabled) {
+  background: #dce3ee;
+  border-color: #94a3b8;
+}
+
+html[data-shell-color-mode='light'] .page-tools-mode-btn--active {
+  border-color: #3b82f6;
+  background: #dbeafe;
+  color: #0f172a;
+}
+
+html[data-shell-color-mode='light'] .page-tools-zoom-menu,
+html[data-shell-color-mode='light'] .find-bar {
+  border-color: rgba(59, 130, 246, 0.45);
+  background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+html[data-shell-color-mode='light'] .find-bar-input {
+  border-color: #b0b8c8;
+  background: #fff;
+  color: #0f172a;
+}
+
+html[data-shell-color-mode='light'] .print-preview-dialog {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+html[data-shell-color-mode='light'] .print-preview-header {
+  border-bottom-color: #cbd5e1;
+}
+
+html[data-shell-color-mode='light'] .print-preview-title {
+  color: #0f172a;
+}
