@@ -4,7 +4,7 @@
 
 The project is a **starting point**: the UI covers everyday browsing basics, while the Python API ships with dummy search, streaming AI, and user/auth endpoints you can replace with real providers, databases, and models. **Developers are free to change the backend** (swap Flask for another framework, add persistence, wire cloud services) without being locked into this template’s placeholder logic.
 
-**Deploy the desktop app** on **Linux**, **Windows**, or **macOS** (see [Packaging](#packaging-desktop-installers) and [Further documentation](#further-documentation)). The Flask server runs **locally during development** or **in the cloud** for production builds.
+**Deploy the desktop app** on **Linux**, **Windows**, or **macOS** (see [Setup procedure](#setup-procedure) and [App packing](#app-packing-desktop-installers)). The Flask server runs **locally during development** or **in the cloud** for production builds.
 
 > **If you clone this repo:** the desktop client is wired to a **hosted API** at **[https://airro.online](https://airro.online)** — that domain points to an **AWS server** where Flask is deployed. Search, AI chat, and login in a **built/packaged** app call that host, not your machine. To use **your own** backend, change the API URL (see [Configure the API domain](#configure-the-api-domain-required-for-new-developers) below).
 
@@ -114,52 +114,92 @@ You can also run **only** the local stack: set `SEARCH_API_ORIGIN` to `http://12
 
 ## Prerequisites
 
-- **Node.js** 18+ (20+ recommended) and **npm**
-- **Python 3** and **pip** (for search, AI, and auth against Flask)
-- On **Linux**, extra libraries for Electron may be required — see [Electron Linux documentation](https://www.electronjs.org/docs/latest/development/build-instructions-linux)
+| Requirement | Notes |
+|-------------|--------|
+| **Node.js** 18+ (20+ recommended) | Includes **npm** |
+| **Python 3** + **pip** | Optional for local Flask; packaged app can use cloud API only |
+| **Git** | To clone the repo |
+| **Linux only** | GTK/NSS and related libs for Electron — see [Electron Linux docs](https://www.electronjs.org/docs/latest/development/build-instructions-linux) |
+
+**Do not commit** `node_modules/`, `dist/`, or `release/` — they are generated locally (see `.gitignore`).
 
 ---
 
-## Installation
+## Setup procedure
 
-Clone the repository and install dependencies from the project root:
+Run all commands from the **project root** after cloning.
+
+### 1. Clone the repository
 
 ```bash
-cd /path/to/web_browser_v3_aws
+git clone https://github.com/bavin-hub/OpenAiRRo.git
+cd OpenAiRRo
+```
+
+(Use your fork URL if you cloned a different remote.)
+
+### 2. Install frontend dependencies
+
+```bash
 npm install
+```
+
+This creates `node_modules/` (including Electron). **Never push `node_modules` to GitHub** — it is large and is recreated with `npm install`.
+
+### 3. Install backend dependencies (optional, for local Flask)
+
+```bash
 pip install -r backend/requirements.txt
 ```
 
----
+Skip this if you only use the hosted API at `https://airro.online`.
 
-## Development
+### 4. Configure the API URL (forks / your own server)
 
-**Terminal 1 — Electron + React (hot reload):**
+Out of the box, production builds call **`https://airro.online`**. To use localhost or your domain, edit `SEARCH_API_ORIGIN` in `src/searchNavigation.js` and update `connect-src` in `index.html` — see [Configure the API domain](#configure-the-api-domain-required-for-new-developers).
+
+### 5. Run in development (recommended first run)
+
+**Terminal 1 — OpenAiRRo UI (Vite + Electron, hot reload):**
 
 ```bash
 npm run dev
 ```
 
-1. **Vite** serves the React app at `http://127.0.0.1:5173`.
-2. **wait-on** waits for that URL, then **Electron** starts with `VITE_DEV_SERVER_URL` set.
-3. DevTools open automatically (detached) for the **shell** window, not each guest `<webview>`.
+- Vite serves the React shell at `http://127.0.0.1:5173`.
+- Electron opens when that URL is ready (`VITE_DEV_SERVER_URL`).
+- DevTools open for the **shell** window (not each `<webview>` tab).
 
-**Terminal 2 — Flask API (search, AI, auth):**
+**Terminal 2 — Local Flask (optional):**
 
 ```bash
 npm run backend
 ```
 
-Runs `backend/main_server.py` on `http://127.0.0.1:5000`. In **dev**, Vite proxies `/user` to that host (`vite.config.js`). For **search and AI**, the shell uses `SEARCH_API_ORIGIN` in `src/searchNavigation.js` (default **`https://airro.online`**) unless you point it at `http://127.0.0.1:5000` for fully local testing.
+- Listens on `http://127.0.0.1:5000`.
+- In dev, `/user/*` is proxied via `vite.config.js`.
+- Search/AI use `SEARCH_API_ORIGIN` unless you set it to `http://127.0.0.1:5000`.
 
-**Production smoke test (no Vite dev server):**
+### 6. Run a production build locally (smoke test)
 
 ```bash
 npm run build
 npm start
 ```
 
-`npm start` loads `dist/index.html` via `electron/main.js`.
+`npm run build` writes the React app to `dist/`. `npm start` runs Electron and loads `dist/index.html` (same layout as packaged apps).
+
+---
+
+## Development (quick reference)
+
+| Goal | Command |
+|------|---------|
+| Dev UI + hot reload | `npm run dev` |
+| Local Flask API | `npm run backend` |
+| Production UI bundle | `npm run build` |
+| Electron + built UI | `npm start` |
+| UI only in a browser (no `<webview>`) | `npm run preview` |
 
 ---
 
@@ -192,24 +232,73 @@ The reference deployment uses **`airro.online` → AWS + Flask**; your fork shou
 
 ---
 
-## Packaging (desktop installers)
+## App packing (desktop installers)
 
-This repo includes **electron-builder** config in `package.json`. After `npm run build`:
+OpenAiRRo uses **electron-builder** (already in `package.json`). Packing **does not** include Python/Flask — the installer only ships `electron/` + `dist/`. API calls use whatever `SEARCH_API_ORIGIN` was set when you ran `npm run build`.
 
-| Script | Description |
-|--------|-------------|
-| `npm run pack` | Unpacked app in `release/linux-unpacked/` (quick test) |
-| `npm run dist` | Full installers for the current OS |
-| `npm run dist -- --linux AppImage` | Linux AppImage |
-| `npm run dist -- --linux deb` | Debian package (needs `author`, `homepage`, `linux.maintainer`) |
-| `npm run dist -- --win` | Windows `.exe` (build on Windows) |
-| `npm run dist -- --mac` | macOS `.dmg` (build on macOS) |
+### Before you pack
 
-Artifacts land in **`release/`**. For `.deb` builds, set `author`, `homepage`, and `build.linux.maintainer` in `package.json`.
+1. Complete [Setup procedure](#setup-procedure) (`npm install` at minimum).
+2. Set `SEARCH_API_ORIGIN` and CSP if you are not using `https://airro.online`.
+3. For **`.deb`** builds, set `author`, `homepage`, and `build.linux.maintainer` in `package.json`.
 
-**Run packaged app with full features:** either use the default API at **`https://airro.online`** (AWS Flask must be up), or change `SEARCH_API_ORIGIN` + CSP, rebuild (`npm run build`), repackage, then launch from `release/`. Local-only testing can use `npm run backend` with `SEARCH_API_ORIGIN` set to `http://127.0.0.1:5000`.
+### Packing commands
 
-Step-by-step packaging notes: **`package-electron.md`**.
+Run from the project root. Each command runs `vite build` first, then electron-builder.
+
+| Command | What it produces |
+|---------|------------------|
+| `npm run pack` | **Unpacked** app (fast test, no installer) → `release/linux-unpacked/` on Linux |
+| `npm run dist` | Installers for the **current OS** |
+| `npm run dist -- --linux AppImage` | Linux **AppImage** |
+| `npm run dist -- --linux deb` | Linux **.deb** package |
+| `npm run dist -- --win` | Windows **.exe** (run on Windows) |
+| `npm run dist -- --mac` | macOS **.dmg** (run on macOS) |
+
+Output directory: **`release/`** (see `build.directories.output` in `package.json`).
+
+Example layout after a Linux `npm run dist`:
+
+```text
+release/
+├── OpenAiRRo-1.0.0.AppImage
+├── OpenAiRRo-1.0.0.deb
+├── linux-unpacked/
+├── builder-debug.yml
+└── builder-effective-config.yaml
+```
+
+Filenames use `productName` + `version` from `package.json` (`OpenAiRRo`, `1.0.0`).
+
+### Run the packaged app
+
+**Unpacked (after `npm run pack`):**
+
+```bash
+./release/linux-unpacked/openairro
+```
+
+(List `release/linux-unpacked/` if the binary name differs.)
+
+**AppImage:**
+
+```bash
+chmod +x release/OpenAiRRo-1.0.0.AppImage
+./release/OpenAiRRo-1.0.0.AppImage
+```
+
+**Debian package:**
+
+```bash
+sudo dpkg -i release/OpenAiRRo-1.0.0.deb
+sudo apt-get install -f
+```
+
+Then launch **OpenAiRRo** from the app menu.
+
+**API for packed builds:** search, AI, and login call **`https://airro.online`** by default. For local-only testing, run `npm run backend` and rebuild after setting `SEARCH_API_ORIGIN` to `http://127.0.0.1:5000`.
+
+More detail: **`package-electron.md`**.
 
 ---
 
